@@ -1,0 +1,32 @@
+import tweepy
+import os
+
+# Authenticate with Twitter API
+consumer_key = ''
+consumer_secret = ''
+access_token = ''
+access_token_secret = ''
+
+auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(access_token, access_token_secret)
+api = tweepy.API(auth)
+
+# Define Bot Functionality
+def report_accounts(tags, count):
+    for tag in tags:
+        tweets = api.search_tweets(q=tag, count=count)
+
+        for tweet in tweets:
+            user = tweet.user.screen_name
+            tweet_id = tweet.id
+            try:
+                api.report_spam(screen_name=user, tweet_id=tweet_id)
+                print(f"Reported account @{user}")
+            except tweepy.TweepError as e:
+                print(f"Error reporting account @{user}: {e}")
+
+# Execute the Bot
+tags_to_report = ['#ex1', '#ex2', '#ex3']  # Replace with the desired tags to report
+tweet_count = 10  # Number of tweets to retrieve and report
+
+report_accounts(tags=tags_to_report, count=tweet_count)
